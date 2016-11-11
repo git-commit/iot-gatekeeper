@@ -1,5 +1,9 @@
 from telegram import (ReplyKeyboardMarkup, ReplyKeyboardHide)
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+import audio
+import logging
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 def start(bot, update):
     reply_keyboard = [['Authorize new person', 'Open the door'], ['Talk']]
@@ -14,7 +18,13 @@ def hello(bot, update):
         'Hello {}'.format(update.message.from_user.first_name))
 
 def echo(bot, update):
+    print(update.message.text)
     bot.sendMessage(chat_id=update.message.chat_id, text=update.message.text)
+
+def voice(bot, update):
+    logging.debug("Received voice message")
+    local_file_path = audio.saveVoice(bot, update.message)
+    audio.playAudioFile(local_file_path)
 
 def caps(bot, update, args):
     text_caps = ' '.join(args).upper()
@@ -26,10 +36,12 @@ updater.dispatcher.add_handler(CommandHandler('start', start))
 updater.dispatcher.add_handler(CommandHandler('hello', hello))
 
 echo_handler = MessageHandler(Filters.text, echo)
+voice_handler = MessageHandler(Filters.voice, voice)
 caps_handler = CommandHandler('caps', caps, pass_args=True)
 
 updater.dispatcher.add_handler(echo_handler)
 updater.dispatcher.add_handler(caps_handler)
+updater.dispatcher.add_handler(voice_handler)
 
 updater.start_polling()
 updater.idle()
