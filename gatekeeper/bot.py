@@ -1,6 +1,10 @@
 from telegram import (ReplyKeyboardMarkup, ReplyKeyboardHide)
 from telegram.ext import Updater, CommandHandler, MessageHandler, RegexHandler, Filters,\
                         ConversationHandler
+import audio
+import logging
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 NAME, PHOTO = range(2)
 
@@ -8,7 +12,7 @@ menu_keyboard = [['Authorize new person', 'Open the door'], ['Talk']]
 
 def start(bot, update):
     update.message.reply_text(
-        'Hi! I am your personal intercom assisstant. \n\n'
+        'Hi! I am your personal intercom assistant. \n\n'
         'Here is a menu of all the functionality I have.',
         reply_markup=ReplyKeyboardMarkup(menu_keyboard, one_time_keyboard=False))
 
@@ -26,6 +30,11 @@ def new_face(bot, update):
     photo_file.download('user_photo.jpg')
     update.message.reply_text('Gorgeous!', reply_markup=ReplyKeyboardMarkup(menu_keyboard, one_time_keyboard=False))
     return ConversationHandler.END
+
+def voice(bot, update):
+    logging.debug("Received voice message")
+    local_file_path = audio.saveVoice(bot, update.message)
+    audio.playAudioFile(local_file_path)
 
 def cancel(bot, update):
     update.message.reply_text('Authorization process canceled.',
@@ -48,6 +57,10 @@ authorize_handler = ConversationHandler(
 )
 
 updater.dispatcher.add_handler(authorize_handler)
+
+voice_handler = MessageHandler(Filters.voice, voice)
+
+updater.dispatcher.add_handler(voice_handler)
 
 updater.start_polling()
 updater.idle()
