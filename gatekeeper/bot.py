@@ -2,7 +2,12 @@ from telegram import (ReplyKeyboardMarkup, ReplyKeyboardHide)
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 def start(bot, update):
-    update.message.reply_text('Hello World!')
+    reply_keyboard = [['Authorize new person', 'Open the door'], ['Talk']]
+
+    update.message.reply_text(
+        'Hi! I am your personal intercom assisstant. \n\n'
+        'Here is a menu of all the functionality I have.',
+        reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=False))
 
 def hello(bot, update):
     update.message.reply_text(
@@ -15,20 +20,10 @@ def caps(bot, update, args):
     text_caps = ' '.join(args).upper()
     bot.sendMessage(chat_id=update.message.chat_id, text=text_caps)
 
-def addNewUser(bot, update):
-    reply_keyboard = [['Boy', 'Girl', 'Other']]
-
-    update.message.reply_text(
-        'Hi! My name is Professor Bot. I will hold a conversation with you. '
-        'Send /cancel to stop talking to me.\n\n'
-        'Are you a boy or a girl?',
-        reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=False))
-
 updater = Updater('293092231:AAEVHlXq0RmYk1Dmnw43DhRyksudxPWd9YE')
 
 updater.dispatcher.add_handler(CommandHandler('start', start))
 updater.dispatcher.add_handler(CommandHandler('hello', hello))
-updater.dispatcher.add_handler(CommandHandler('add', addNewUser))
 
 echo_handler = MessageHandler(Filters.text, echo)
 caps_handler = CommandHandler('caps', caps, pass_args=True)
