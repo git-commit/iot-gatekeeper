@@ -5,7 +5,7 @@ def start(bot, update):
     reply_keyboard = [['Authorize new person', 'Open the door'], ['Talk']]
 
     update.message.reply_text(
-        'Hi! I am your personal intercom assisstant. \n\n'
+        'Hi! I am your personal intercom assistant. \n\n'
         'Here is a menu of all the functionality I have.',
         reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=False))
 

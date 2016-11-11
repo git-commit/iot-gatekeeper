@@ -1,3 +1,4 @@
+import logging
 import requests
 import os
 from gatekeeper import config
@@ -31,7 +32,7 @@ class FaceRecognition:
         }
         body = open(self.image_folder + image_name, 'rb').read()
         response = requests.post("%s/face/v1.0/detect" % config.azure_api_url, params=params, headers=headers, data=body)
-        print(response.text)
+        logging.debug(response.text)
         response.raise_for_status()
         return response.json()[0]['faceId']
 
@@ -45,7 +46,7 @@ class FaceRecognition:
             "faceId2": face_id2
         }
         response = requests.post("%s/face/v1.0/verify" % config.azure_api_url, headers=headers, json=body)
-        print(response.text)
+        logging.debug(response.text)
         response.raise_for_status()
         return response.json()['isIdentical']
 
