@@ -1,37 +1,28 @@
-import http.client
-import json
-import urllib.error
-import urllib.parse
-import urllib.request
-
+import requests
 from gatekeeper import config
 
 
 class FaceRecognition:
 
     headers = {
-        # Request headers
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/octet-stream',
         'Ocp-Apim-Subscription-Key': '%s' % config.azure_subs_id,
     }
+    image_folder = '../auth_pictures/'
 
-    def decode_face(self):
-        params = urllib.parse.urlencode({
+    def decode_face(self, image_name):
+        params = {
             # Request parameters
             'returnFaceId': 'true',
             'returnFaceLandmarks': 'false'
-        })
-        body = ' {"url": "%s"}' % config.test_trump_image_url
-        conn = http.client.HTTPSConnection(config.azure_api_url)
-        conn.request("POST", "/face/v1.0/detect?%s" % params, body, self.headers)
-        response = conn.getresponse()
-        data_str = response.read().decode('utf-8')
-        print(data_str)
-        data = json.loads(data_str)
-        conn.close()
-        return data[0]['faceId']
+        }
+        body = open(self.image_folder + image_name, 'rb').read()
+        response = requests.post("%s/face/v1.0/detect" % config.azure_api_url, params=params, headers=self.headers, data=body)
+        print(response.text)
+        response.raise_for_status()
+        return response.json()[0]['faceId']
 
-    def verify_face(self):
+    def verify_face(self, ):
         params = None
         try:
             conn = http.client.HTTPSConnection(config.azure_api_url)
@@ -43,4 +34,4 @@ class FaceRecognition:
         except Exception as e:
             print("[Errno {0}] {1}".format(e.errno, e.strerror))
 
-FaceRecognition().decode_face()
+FaceRecognition().decode_face('trump.jpg')
