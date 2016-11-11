@@ -3,10 +3,17 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, RegexHandler, 
                         ConversationHandler
 import audio
 import logging
+
+from facerecognition import *
+
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 NAME, PHOTO = range(2)
+
+name = None
+
+face_recognition = FaceRecognition()
 
 menu_keyboard = [['Authorize new person', 'Open the door'], ['Talk']]
 
@@ -27,7 +34,7 @@ def enter_name(bot, update):
 
 def new_face(bot, update):
     photo_file = bot.getFile(update.message.photo[-1].file_id)
-    photo_file.download('user_photo.jpg')
+    face_recognition.add_auth_person(photo_file, name)
     update.message.reply_text('Gorgeous!', reply_markup=ReplyKeyboardMarkup(menu_keyboard, one_time_keyboard=False))
     return ConversationHandler.END
 
