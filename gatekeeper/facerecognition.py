@@ -60,6 +60,7 @@ class FaceRecognition:
         return datetime.now() - timedelta(days=1) < last_decode
 
     def add_auth_person(self, image, name):
-        pass
+        image.download(self.image_folder + '%s.jpg' % name)
+
 
 FaceRecognition().are_same("bb8d90b7-ffec-4ab1-92e0-636c18e8619b", "c1838c6f-2e46-487b-8be3-76e878bebd0c")
