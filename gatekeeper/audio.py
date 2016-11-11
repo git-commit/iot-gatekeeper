@@ -14,5 +14,9 @@ def saveVoice(bot, message):
     file_name = file_name.replace(":", ".")
     logging.info("Saving voice file %s" % (file_name))
     new_file = bot.getFile(file_id)
-    local_filename = os.path.join(temp, file_name)
-    new_file.download(local_filename)
+    local_file_path = os.path.join(temp, file_name)
+    new_file.download(local_file_path)
+    return local_file_path
+
+def playAudioFile(path):
+    pass

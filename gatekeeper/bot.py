@@ -23,7 +23,8 @@ def echo(bot, update):
 
 def voice(bot, update):
     logging.debug("Received voice message")
-    audio.saveVoice(bot, update.message)
+    local_file_path = audio.saveVoice(bot, update.message)
+    audio.playAudioFile(local_file_path)
 
 def caps(bot, update, args):
     text_caps = ' '.join(args).upper()
