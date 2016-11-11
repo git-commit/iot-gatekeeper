@@ -1,3 +1,4 @@
+from telegram import (ReplyKeyboardMarkup, ReplyKeyboardHide)
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
 def start(bot, update):
@@ -21,9 +22,7 @@ def addNewUser(bot, update):
         'Hi! My name is Professor Bot. I will hold a conversation with you. '
         'Send /cancel to stop talking to me.\n\n'
         'Are you a boy or a girl?',
-        reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=True))
-
-    return ''
+        reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=False))
 
 updater = Updater('293092231:AAEVHlXq0RmYk1Dmnw43DhRyksudxPWd9YE')
 
