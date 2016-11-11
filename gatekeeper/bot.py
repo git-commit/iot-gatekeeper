@@ -1,46 +1,65 @@
 from telegram import (ReplyKeyboardMarkup, ReplyKeyboardHide)
-from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from telegram.ext import Updater, CommandHandler, MessageHandler, RegexHandler, Filters,\
+                        ConversationHandler
 import audio
 import logging
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
+NAME, PHOTO = range(2)
+
+menu_keyboard = [['Authorize new person', 'Open the door'], ['Talk']]
+
 def start(bot, update):
-    reply_keyboard = [['Authorize new person', 'Open the door'], ['Talk']]
-
     update.message.reply_text(
-        'Hi! I am your personal intercom assisstant. \n\n'
+        'Hi! I am your personal intercom assistant. \n\n'
         'Here is a menu of all the functionality I have.',
-        reply_markup=ReplyKeyboardMarkup(reply_keyboard, one_time_keyboard=False))
+        reply_markup=ReplyKeyboardMarkup(menu_keyboard, one_time_keyboard=False))
 
-def hello(bot, update):
-    update.message.reply_text(
-        'Hello {}'.format(update.message.from_user.first_name))
+def authorize(bot, update):
+    update.message.reply_text('Enter the person\'s name')
+    return NAME
 
-def echo(bot, update):
-    print(update.message.text)
-    bot.sendMessage(chat_id=update.message.chat_id, text=update.message.text)
+def enter_name(bot, update):
+    name = update.message.text
+    update.message.reply_text('You entered: %s\n\nPlease upload the corresponding face' %name)
+    return PHOTO
+
+def new_face(bot, update):
+    photo_file = bot.getFile(update.message.photo[-1].file_id)
+    photo_file.download('user_photo.jpg')
+    update.message.reply_text('Gorgeous!', reply_markup=ReplyKeyboardMarkup(menu_keyboard, one_time_keyboard=False))
+    return ConversationHandler.END
 
 def voice(bot, update):
     logging.debug("Received voice message")
     local_file_path = audio.saveVoice(bot, update.message)
     audio.playAudioFile(local_file_path)
 
-def caps(bot, update, args):
-    text_caps = ' '.join(args).upper()
-    bot.sendMessage(chat_id=update.message.chat_id, text=text_caps)
+def cancel(bot, update):
+    update.message.reply_text('Authorization process canceled.',
+                              reply_markup=ReplyKeyboardMarkup(menu_keyboard, one_time_keyboard=False))
+    return ConversationHandler.END
 
-updater = Updater('293092231:AAEVHlXq0RmYk1Dmnw43DhRyksudxPWd9YE')
+updater = Updater('290587333:AAG9wahnftHOWXeT00JIQolmgVwmEk0pqEU')
 
 updater.dispatcher.add_handler(CommandHandler('start', start))
-updater.dispatcher.add_handler(CommandHandler('hello', hello))
 
-echo_handler = MessageHandler(Filters.text, echo)
+authorize_handler = ConversationHandler(
+    entry_points = [RegexHandler('^Authorize new person', authorize)],
+
+    states = {
+        NAME: [MessageHandler(Filters.text, enter_name)],
+        PHOTO: [MessageHandler(Filters.photo, new_face)]
+    },
+
+    fallbacks=[CommandHandler('cancel', cancel)]
+)
+
+updater.dispatcher.add_handler(authorize_handler)
+
 voice_handler = MessageHandler(Filters.voice, voice)
-caps_handler = CommandHandler('caps', caps, pass_args=True)
 
-updater.dispatcher.add_handler(echo_handler)
-updater.dispatcher.add_handler(caps_handler)
 updater.dispatcher.add_handler(voice_handler)
 
 updater.start_polling()
