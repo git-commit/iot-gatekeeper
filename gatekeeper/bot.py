@@ -1,6 +1,3 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-
 from telegram import (ReplyKeyboardMarkup, ReplyKeyboardHide)
 from telegram.ext import Updater, CommandHandler, MessageHandler, RegexHandler, Filters,\
                         ConversationHandler

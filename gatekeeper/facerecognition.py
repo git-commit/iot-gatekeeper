@@ -33,7 +33,7 @@ class FaceRecognition:
             'returnFaceId': 'true',
             'returnFaceLandmarks': 'false'
         }
-        response = requests.post("%s/face/v1.0/detect" % config.azure_api_url, params=params, headers=headers, data=body)
+        response = requests.post("%s/face/v1.0/detect" % config.azure_api_url, params=params, headers=headers, data=image)
         logging.debug(response.text)
         response.raise_for_status()
         return response.json()[0]['faceId']
