@@ -71,7 +71,7 @@ class Intercom(object):
 
     def update_state(self):
         self.__update_bell_state()
-
+        self.__update_buzzer_state()
 
 class GPIOThread(threading.Thread):
 
