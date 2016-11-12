@@ -55,7 +55,7 @@ class FaceRecognition:
     def verify_face_id(self, face_id):
         for image_name in os.listdir(self.image_folder):
             if self.are_same(face_id, self.get_face_id(image_name)):
-                return image_name.split('.')[0]
+                return image_name.split('.')[0].capitalize()
         return None
 
     def is_valid(self, last_decode):

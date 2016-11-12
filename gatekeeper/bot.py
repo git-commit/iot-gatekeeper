@@ -7,17 +7,21 @@ import privateconfig
 import logging
 
 from facerecognition import *
+from textToSpeech import *
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 NAME, PHOTO = range(2)
 
+TALK = 0
+
 name = None
 
 face_recognition = FaceRecognition()
+text_to_speech = TextToSpeech()
 
-menu_keyboard = [['Authorize new person', 'Open the door'], ['Talk']]
+menu_keyboard = [['Authorize new person', 'Talk'], ['Open the door', 'Hold the door!']]
 
 def start(bot, update):
     update.message.reply_text(
@@ -47,7 +51,7 @@ def voice(bot, update):
     audio.playAudioFile(local_file_path)
 
 def cancel(bot, update):
-    update.message.reply_text('Authorization process canceled.',
+    update.message.reply_text('Process canceled.',
                               reply_markup=ReplyKeyboardMarkup(menu_keyboard, one_time_keyboard=False))
     return ConversationHandler.END
 
@@ -62,6 +66,19 @@ def verify(bot, update):
         text = 'Some stranger is knocking on the door. Do you want to let him in?'
     update.message.reply_text(text)
 
+def enter_talk(bot, update):
+    update.message.reply_text('Enter the text you want to say.')
+    return TALK
+
+def talk(bot, update):
+    file = text_to_speech.transformToAudio(update.message.text)
+    if file:
+        update.message.reply_text('Your message was successfully transmitted.')
+    else:
+        update.message.reply_text('There has been a problem with your message.')
+
+    return ConversationHandler.END
+
 updater = Updater(privateconfig.telegram_token)
 
 authorize_handler = ConversationHandler(
@@ -75,9 +92,21 @@ authorize_handler = ConversationHandler(
     fallbacks=[CommandHandler('cancel', cancel)]
 )
 
+talk_handler = ConversationHandler(
+    entry_points = [RegexHandler('^Talk', enter_talk)],
+
+    states = {
+        TALK: [MessageHandler(Filters.text, talk)]
+    },
+
+    fallbacks=[RegexHandler('^Cancel', cancel)]
+)
+
 updater.dispatcher.add_handler(authorize_handler)
 updater.dispatcher.add_handler(CommandHandler('start', start))
 updater.dispatcher.add_handler(MessageHandler(Filters.photo, verify))
+
+updater.dispatcher.add_handler(talk_handler)
 
 voice_handler = MessageHandler(Filters.voice, voice)
 
