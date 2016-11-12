@@ -1,20 +1,23 @@
 import threading
 from facerecognition import *
 from grovepi import *
+from time import sleep
+import logging
 
 class Intercom(object):
 
     """Docstring for Intercom. """
 
     def __init__(self):
-        self.bell_button_gpio = "D4"
-        self.bell_speaker_gpio = "D2"
-        self.buzzer_gpio = "D3"
+        self.bell_button_gpio = 4
+        self.bell_speaker_gpio = 2
+        self.buzzer_gpio = 3
         self.display_i2c = "I2C-1"
         self.debug_led = "D7"
         self.onBellPressedCallback = None
         self.gpio_thread = GPIOThread(self)
-
+        pinMode(self.bell_button_gpio, "INPUT")
+        pinMode(self.buzzer_gpio, "OUTPUT")
 
     def openDoor(self):
         pass
@@ -41,6 +44,7 @@ class Intercom(object):
             self.onBellPressedCallback()
 
     def isBellPressed(self):
+        logging.info("Bell is pressed")
         return readDigital(self.bell_button_gpio) == 1
 
 class GPIOThread(threading.Thread):
@@ -56,3 +60,4 @@ class GPIOThread(threading.Thread):
             if bell_is_pressed and not bell_is_pressed_new:
                 self.intercom.onBellPressed()
             bell_is_pressed = bell_is_pressed
+            sleep(0.5)
