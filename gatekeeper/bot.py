@@ -2,8 +2,8 @@ from telegram import (ReplyKeyboardMarkup, ReplyKeyboardHide)
 from telegram.ext import Updater, CommandHandler, MessageHandler, RegexHandler, Filters,\
                         ConversationHandler
 import config
-import privateconfig
 import audio
+import privateconfig
 import logging
 
 from facerecognition import *
@@ -30,6 +30,7 @@ def authorize(bot, update):
     return NAME
 
 def enter_name(bot, update):
+    global name
     name = update.message.text
     update.message.reply_text('You entered: %s\n\nPlease upload the corresponding face' %name)
     return PHOTO
@@ -52,12 +53,10 @@ def cancel(bot, update):
 
 def verify(bot, update):
     photo_file = bot.getFile(update.message.photo[-1].file_id)
-    face_recognition.verify_face(photo_file)
+    verified_name = face_recognition.verify_face(photo_file)
+    update.message.reply_text('%s' %verified_name)
 
-updater = Updater('290587333:AAG9wahnftHOWXeT00JIQolmgVwmEk0pqEU')
-
-updater.dispatcher.add_handler(CommandHandler('start', start))
-updater.dispatcher.add_handler(CommandHandler('verify', verify))
+updater = Updater(privateconfig.telegram_token)
 
 authorize_handler = ConversationHandler(
     entry_points = [RegexHandler('^Authorize new person', authorize)],
@@ -71,6 +70,8 @@ authorize_handler = ConversationHandler(
 )
 
 updater.dispatcher.add_handler(authorize_handler)
+updater.dispatcher.add_handler(CommandHandler('start', start))
+updater.dispatcher.add_handler(MessageHandler(Filters.photo, verify))
 
 voice_handler = MessageHandler(Filters.voice, voice)
 
