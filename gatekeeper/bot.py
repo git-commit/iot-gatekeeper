@@ -48,9 +48,13 @@ def cancel(bot, update):
                               reply_markup=ReplyKeyboardMarkup(menu_keyboard, one_time_keyboard=False))
     return ConversationHandler.END
 
+def verify(bot, update):
+    photo_file = bot.getFile(update.message.photo[-1].file_id)
+
 updater = Updater('290587333:AAG9wahnftHOWXeT00JIQolmgVwmEk0pqEU')
 
 updater.dispatcher.add_handler(CommandHandler('start', start))
+updater.dispatcher.add_handler(CommandHandler('verify', verify))
 
 authorize_handler = ConversationHandler(
     entry_points = [RegexHandler('^Authorize new person', authorize)],
