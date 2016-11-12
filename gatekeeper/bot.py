@@ -5,7 +5,7 @@ import config
 import audio
 import privateconfig
 import logging
-
+from io import BytesIO
 from facerecognition import *
 
 logging.basicConfig(level=logging.DEBUG,
@@ -14,12 +14,14 @@ logging.basicConfig(level=logging.DEBUG,
 NAME, PHOTO = range(2)
 
 name = None
-
+chat_id = None
 face_recognition = FaceRecognition()
 
 menu_keyboard = [['Authorize new person', 'Open the door'], ['Talk']]
 
 def start(bot, update):
+    global chat_id
+    chat_id = update.message.chat.id
     update.message.reply_text(
         'Hi! I am your personal intercom assistant. \n\n'
         'Here is a menu of all the functionality I have.',
@@ -62,8 +64,15 @@ def verify(bot, update):
         text = 'Some stranger is knocking on the door. Do you want to let him in?'
     update.message.reply_text(text)
 
-updater = Updater(privateconfig.telegram_token)
+def verify_image(updater, image):
+    verified_name = face_recognition.verify_face(image)
+    text = '%s is knocking on the door!' % verified_name
+    if verified_name is None:
+        text = 'Some stranger is knocking on the door. Do you want to let him in?'
+    updater.bot.sendPhoto(chat_id, BytesIO(image))
+    updater.bot.sendMessage(chat_id, text)
 
+updater = Updater(privateconfig.telegram_token)
 authorize_handler = ConversationHandler(
     entry_points = [RegexHandler('^Authorize new person', authorize)],
 
@@ -83,5 +92,6 @@ voice_handler = MessageHandler(Filters.voice, voice)
 
 updater.dispatcher.add_handler(voice_handler)
 
-updater.start_polling()
-updater.idle()
+def run_bot():
+    updater.start_polling()
+    updater.idle()
