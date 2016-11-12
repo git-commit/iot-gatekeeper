@@ -1,11 +1,14 @@
-from io import BytesIO
+import logging
 
 import audio
+import privateconfig
 from facerecognition import *
+from textToSpeech import *
+
+from io import BytesIO
 from telegram import (ReplyKeyboardMarkup)
 from telegram.ext import Updater, CommandHandler, MessageHandler, RegexHandler, Filters,\
                         ConversationHandler
-from textToSpeech import *
 
 
 logging.basicConfig(level=logging.DEBUG,

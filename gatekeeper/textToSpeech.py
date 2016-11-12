@@ -14,7 +14,7 @@ class TextToSpeech:
         params = ""
         headers = {"Ocp-Apim-Subscription-Key": privateconfig.bing_speech_token}
 
-        accessTokenUri = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken";
+        accessTokenUri = "https://api.cognitive.microsoft.com/sts/v1.0/issueToken"
 
         logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -29,7 +29,7 @@ class TextToSpeech:
 
         response.raise_for_status()
 
-        TextToSpeech.accesstoken = data.decode("UTF-8")
+        TextToSpeech.accesstoken = data
         logging.debug ("Access Token: " + TextToSpeech.accesstoken)
 
     def transformToAudio(self, text):
