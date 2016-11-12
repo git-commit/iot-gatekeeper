@@ -9,6 +9,7 @@ import logging
 from facerecognition import *
 from textToSpeech import *
 
+
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
@@ -79,6 +80,9 @@ def talk(bot, update):
 
     return ConversationHandler.END
 
+def playAudio(bot, update):
+    audio.playAudioFile('temp.wav')
+
 updater = Updater(privateconfig.telegram_token)
 
 authorize_handler = ConversationHandler(
@@ -105,6 +109,10 @@ talk_handler = ConversationHandler(
 updater.dispatcher.add_handler(authorize_handler)
 updater.dispatcher.add_handler(CommandHandler('start', start))
 updater.dispatcher.add_handler(MessageHandler(Filters.photo, verify))
+
+updater.dispatcher.add_handler(MessageHandler(Filters.voice, audio.transmitVoice))
+
+updater.dispatcher.add_handler(CommandHandler('play', playAudio))
 
 updater.dispatcher.add_handler(talk_handler)
 
