@@ -42,7 +42,7 @@ class Intercom(object):
 
     def takePicture(self):
         image_name = 'temo.jpg'
-        os.system('fswebcam -r 320x240 --save %s' % image_name)
+        os.system('fswebcam -r 640x480 --save %s' % image_name)
         return open(image_name, 'rb').read()
 
     def registerOnBellPressedListener(self, callback):
