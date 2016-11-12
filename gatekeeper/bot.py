@@ -86,6 +86,7 @@ def talk(bot, update):
     file = speech_recognition.transformToAudio(update.message.text)
     if file:
         update.message.reply_text('Your message was successfully transmitted.')
+        audio.playAudioFile('temp.wav')
     else:
         update.message.reply_text('There has been a problem with your message.')
 
