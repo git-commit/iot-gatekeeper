@@ -50,9 +50,9 @@ class GPIOThread(threading.Thread):
         self.intercom = intercom
 
     def run(self):
-        bell_is_ringing = False
+        bell_is_pressed = False
         while True:
-            bell_is_ringing_new = self.intercom.isBellPressed()
-            if bell_is_ringing and not bell_is_ringing_new:
+            bell_is_pressed_new = self.intercom.isBellPressed()
+            if bell_is_pressed and not bell_is_pressed_new:
                 self.intercom.onBellPressed()
-            bell_is_ringing = bell_is_ringing_new
+            bell_is_pressed = bell_is_pressed
