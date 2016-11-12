@@ -77,8 +77,11 @@ def verify_image(updater, image):
     text = '%s is knocking on the door!' % verified_name
     if verified_name is None:
         text = 'Some stranger is knocking on the door. Do you want to let him in?'
-    updater.bot.sendPhoto(chat_id, BytesIO(image))
-    updater.bot.sendMessage(chat_id, text)
+    try:
+        updater.bot.sendPhoto(chat_id, BytesIO(image))
+        updater.bot.sendMessage(chat_id, text)
+    except Exception:
+        logging.exception("Can not send the photo of the person in front of the door to the chat.")
     return verified_name is not None
 
 def enter_talk(bot, update):
