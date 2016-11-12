@@ -8,8 +8,10 @@ from datetime import datetime, timedelta
 decoded_auth_faces = {}
 
 class FaceRecognition:
-
-    image_folder = '../auth_pictures/'
+    home = os.path.expanduser("~")
+    image_folder = os.path.join(home, ".config", "gatekeeper", 'auth_pictures')
+    if not os.path.exists(image_folder):
+        os.makedirs(image_folder)
 
     def get_face_id(self, image_name):
         if image_name in decoded_auth_faces:
@@ -21,7 +23,8 @@ class FaceRecognition:
         return face_id
 
     def decode_face_from_file(self, image_name):
-        return self.decode_page_from_image(open(self.image_folder + image_name, 'rb').read())
+        path = os.path.join(self.image_folder, image_name)
+        return self.decode_page_from_image(open(path, 'rb').read())
 
     def decode_page_from_image(self, image):
         headers = {
@@ -62,7 +65,8 @@ class FaceRecognition:
         return datetime.now() - timedelta(days=1) < last_decode
 
     def add_auth_person(self, image, name):
-        image.download(self.image_folder + '%s.jpg' % name)
+        path = os.path.join(self.image_folder, "%s.jpg" % name)
+        image.download(path)
 
     def verify_face(self, image):
         face_id = self.decode_page_from_image(image)

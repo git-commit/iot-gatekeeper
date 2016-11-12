@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import bot as chat_bot
 from intercom import Intercom
 import logging
