@@ -1,4 +1,5 @@
 /gatekeeper/config.py
+/gatekeeper/privateconfig.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -1,6 +1,11 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from telegram import (ReplyKeyboardMarkup, ReplyKeyboardHide)
 from telegram.ext import Updater, CommandHandler, MessageHandler, RegexHandler, Filters,\
                         ConversationHandler
+import config
+import privateconfig
 import audio
 import logging
 logging.basicConfig(level=logging.DEBUG,
@@ -41,7 +46,7 @@ def cancel(bot, update):
                               reply_markup=ReplyKeyboardMarkup(menu_keyboard, one_time_keyboard=False))
     return ConversationHandler.END
 
-updater = Updater('290587333:AAG9wahnftHOWXeT00JIQolmgVwmEk0pqEU')
+updater = Updater(privateconfig.telegram_api_key)
 
 updater.dispatcher.add_handler(CommandHandler('start', start))
 
