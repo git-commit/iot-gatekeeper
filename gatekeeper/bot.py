@@ -55,6 +55,7 @@ def cancel(bot, update):
 
 def verify(bot, update):
     photo_file = bot.getFile(update.message.photo[-1].file_id)
+    face_recognition.verify_face(photo_file)
 
 updater = Updater('290587333:AAG9wahnftHOWXeT00JIQolmgVwmEk0pqEU')
 
