@@ -1,7 +1,7 @@
 import logging
 import requests
 import os
-from gatekeeper import config
+import config
 from datetime import datetime, timedelta
 
 # After decoding authenticated face we store it to this dictionary for 24 hours, to reduce the number of decoding requests
