@@ -50,7 +50,7 @@ class FaceRecognition:
         response.raise_for_status()
         return response.json()['isIdentical']
 
-    def verify_face(self, face_id):
+    def verify_face_id(self, face_id):
         for image_name in os.listdir(self.image_folder):
             if self.are_same(face_id, self.get_face_id(image_name)):
                 return True
@@ -62,5 +62,5 @@ class FaceRecognition:
     def add_auth_person(self, image, name):
         image.download(self.image_folder + '%s.jpg' % name)
 
-
-FaceRecognition().are_same("bb8d90b7-ffec-4ab1-92e0-636c18e8619b", "c1838c6f-2e46-487b-8be3-76e878bebd0c")
+    def verify_face(self, image):
+        pass
