@@ -39,7 +39,10 @@ class FaceRecognition:
         response = requests.post("%s/face/v1.0/detect" % config.azure_api_url, params=params, headers=headers, data=image)
         logging.debug(response.text)
         response.raise_for_status()
-        return response.json()[0]['faceId']
+        if len(response.json()) > 0:
+            return response.json()[0]['faceId']
+        else:
+            return None
 
     def are_same(self, face_id1, face_id2):
         headers = {
@@ -70,4 +73,7 @@ class FaceRecognition:
 
     def verify_face(self, image):
         face_id = self.decode_page_from_image(image)
-        return self.verify_face_id(face_id)
+        if face_id:
+            return self.verify_face_id(face_id)
+        else:
+            return None
