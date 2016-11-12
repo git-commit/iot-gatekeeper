@@ -32,13 +32,13 @@ def authorize(bot, update):
 def enter_name(bot, update):
     global name
     name = update.message.text
-    update.message.reply_text('You entered: %s\n\nPlease upload the corresponding face' %name)
+    update.message.reply_text('Now upload a photo of %s!' %name)
     return PHOTO
 
 def new_face(bot, update):
     photo_file = bot.getFile(update.message.photo[-1].file_id)
     face_recognition.add_auth_person(photo_file, name)
-    update.message.reply_text('Gorgeous!', reply_markup=ReplyKeyboardMarkup(menu_keyboard, one_time_keyboard=False))
+    update.message.reply_text('Congratulation! Now %s can unlock the door.' % name, reply_markup=ReplyKeyboardMarkup(menu_keyboard, one_time_keyboard=False))
     return ConversationHandler.END
 
 def voice(bot, update):
@@ -57,7 +57,10 @@ def verify(bot, update):
     photo_file.download(path)
     file_stream = open(path, "rb").read()
     verified_name = face_recognition.verify_face(file_stream)
-    update.message.reply_text('%s' %verified_name)
+    text = '%s is knocking on the door!' % verified_name
+    if verified_name is None:
+        text = 'Some stranger is knocking on the door. Do you want to let him in?'
+    update.message.reply_text(text)
 
 updater = Updater(privateconfig.telegram_token)
 

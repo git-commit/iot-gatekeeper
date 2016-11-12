@@ -1,6 +1,6 @@
 /gatekeeper/config.py
 /gatekeeper/privateconfig.py
-
+/auth_pictures
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
