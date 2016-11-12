@@ -79,6 +79,7 @@ def verify_image(updater, image):
         text = 'Some stranger is knocking on the door. Do you want to let him in?'
     updater.bot.sendPhoto(chat_id, BytesIO(image))
     updater.bot.sendMessage(chat_id, text)
+    return verified_name is not None
 
 def enter_talk(bot, update):
     update.message.reply_text('Enter the text you want to say.')
