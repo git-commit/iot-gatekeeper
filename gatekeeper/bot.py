@@ -1,12 +1,10 @@
-from telegram import (ReplyKeyboardMarkup, ReplyKeyboardHide)
+from io import BytesIO
+
+import audio
+from facerecognition import *
+from telegram import (ReplyKeyboardMarkup)
 from telegram.ext import Updater, CommandHandler, MessageHandler, RegexHandler, Filters,\
                         ConversationHandler
-import config
-import audio
-import privateconfig
-import logging
-
-from facerecognition import *
 from textToSpeech import *
 
 
@@ -18,13 +16,15 @@ NAME, PHOTO = range(2)
 TALK = 0
 
 name = None
-
+chat_id = None
 face_recognition = FaceRecognition()
 text_to_speech = TextToSpeech()
 
 menu_keyboard = [['Authorize new person', 'Talk'], ['Open the door', 'Hold the door!']]
 
 def start(bot, update):
+    global chat_id
+    chat_id = update.message.chat.id
     update.message.reply_text(
         'Hi! I am your personal intercom assistant. \n\n'
         'Here is a menu of all the functionality I have.',
@@ -67,6 +67,14 @@ def verify(bot, update):
         text = 'Some stranger is knocking on the door. Do you want to let him in?'
     update.message.reply_text(text)
 
+def verify_image(updater, image):
+    verified_name = face_recognition.verify_face(image)
+    text = '%s is knocking on the door!' % verified_name
+    if verified_name is None:
+        text = 'Some stranger is knocking on the door. Do you want to let him in?'
+    updater.bot.sendPhoto(chat_id, BytesIO(image))
+    updater.bot.sendMessage(chat_id, text)
+
 def enter_talk(bot, update):
     update.message.reply_text('Enter the text you want to say.')
     return TALK
@@ -84,7 +92,6 @@ def playAudio(bot, update):
     audio.playAudioFile('temp.wav')
 
 updater = Updater(privateconfig.telegram_token)
-
 authorize_handler = ConversationHandler(
     entry_points = [RegexHandler('^Authorize new person', authorize)],
 
@@ -120,5 +127,6 @@ voice_handler = MessageHandler(Filters.voice, voice)
 
 updater.dispatcher.add_handler(voice_handler)
 
-updater.start_polling()
-updater.idle()
+def run_bot():
+    updater.start_polling()
+    updater.idle()
