@@ -3,7 +3,7 @@ import logging
 import audio
 import privateconfig
 from facerecognition import *
-from textToSpeech import *
+from SpeechRecognition import *
 
 from io import BytesIO
 from telegram import (ReplyKeyboardMarkup)
@@ -21,7 +21,7 @@ TALK = 0
 name = None
 chat_id = None
 face_recognition = FaceRecognition()
-text_to_speech = TextToSpeech()
+speech_recognition = SpeechRecognition()
 
 menu_keyboard = [['Authorize new person', 'Talk'], ['Open the door', 'Hold the door!']]
 
@@ -83,7 +83,7 @@ def enter_talk(bot, update):
     return TALK
 
 def talk(bot, update):
-    file = text_to_speech.transformToAudio(update.message.text)
+    file = speech_recognition.transformToAudio(update.message.text)
     if file:
         update.message.reply_text('Your message was successfully transmitted.')
     else:
@@ -93,6 +93,14 @@ def talk(bot, update):
 
 def playAudio(bot, update):
     audio.playAudioFile('temp.wav')
+
+def sendVoiceToChat(bot, update, file_path):
+    bot.sendVoice(chat_id=update.message.chat_id, voice=open(file_path, 'rb'))
+    speech_recognition.transformToText("output.wav")
+
+def voiceSenderTester(bot, update):
+    file = audio.recordVoice()
+    sendVoiceToChat(bot, update, file)
 
 updater = Updater(privateconfig.telegram_token)
 authorize_handler = ConversationHandler(
@@ -125,6 +133,8 @@ updater.dispatcher.add_handler(MessageHandler(Filters.voice, audio.transmitVoice
 updater.dispatcher.add_handler(CommandHandler('play', playAudio))
 
 updater.dispatcher.add_handler(talk_handler)
+
+updater.dispatcher.add_handler(CommandHandler('record', voiceSenderTester))
 
 voice_handler = MessageHandler(Filters.voice, voice)
 
