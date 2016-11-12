@@ -11,5 +11,3 @@ def onBellPressed():
 
 chat_bot.run_bot()
 icom.registerOnBellPressedListener(onBellPressed)
-sleep(5)
-icom.onBellPressed()
