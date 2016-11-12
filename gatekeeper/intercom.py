@@ -16,6 +16,7 @@ class Intercom(object):
         self.debug_led = "D7"
         self.onBellPressedCallback = None
         self.gpio_thread = GPIOThread(self)
+        self.gpio_thread.start()
         pinMode(self.bell_button_gpio, "INPUT")
         pinMode(self.buzzer_gpio, "OUTPUT")
 
@@ -23,7 +24,7 @@ class Intercom(object):
         pass
 
     def ringBell(self):
-        readDigital(self.buzzer_gpio, 1)
+        digitalWrite(self.buzzer_gpio, 1)
 
     def recordAudio(self, seconds=10):
         pass
@@ -41,11 +42,12 @@ class Intercom(object):
 
     def onBellPressed(self):
         if self.onBellPressedCallback:
+            logging.info("Bell is pressed")
             self.onBellPressedCallback()
 
     def isBellPressed(self):
-        logging.info("Bell is pressed")
-        return readDigital(self.bell_button_gpio) == 1
+        read = digitalRead(self.bell_button_gpio)
+        return read == 1
 
 class GPIOThread(threading.Thread):
 
@@ -57,7 +59,7 @@ class GPIOThread(threading.Thread):
         bell_is_pressed = False
         while True:
             bell_is_pressed_new = self.intercom.isBellPressed()
-            if bell_is_pressed and not bell_is_pressed_new:
+            if bell_is_pressed is not bell_is_pressed_new:
                 self.intercom.onBellPressed()
-            bell_is_pressed = bell_is_pressed
+            bell_is_pressed = bell_is_pressed_new
             sleep(0.5)

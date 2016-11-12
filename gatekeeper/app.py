@@ -11,5 +11,5 @@ def onBellPressed():
         logging.warning('Bell is pressed but we have now user in the chat')
     chat_bot.verify_image(chat_bot.updater, icom.takePicture())
 
-chat_bot.run_bot()
 icom.registerOnBellPressedListener(onBellPressed)
+chat_bot.run_bot()
