@@ -85,7 +85,7 @@ def cancel(bot, update):
 
 def verify(bot, update):
     photo_file = bot.getFile(update.message.photo[-1].file_id)
-    path = '%s.jpg' % name
+    path = 'candidate.jpg'
     photo_file.download(path)
     file_stream = open(path, "rb").read()
     verified_name = face_recognition.verify_face(file_stream)
