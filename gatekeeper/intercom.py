@@ -10,8 +10,6 @@ class Intercom(object):
 
     """Docstring for Intercom. """
 
-    BUZZER_AUDIO_FILE = 'res/buzz.wav'
-
     def __init__(self):
         self.bell_button_gpio = 4
         self.bell_speaker_gpio = 2
@@ -29,7 +27,7 @@ class Intercom(object):
         pass
 
     def ringBuzzer(self):
-        audio.playAudioFile(Intercom.BUZZER_AUDIO_FILE)
+        audio.playAudioFile(audio.BUZZER_AUDIO_FILE)
 
     def recordAudio(self, seconds=10):
         pass
