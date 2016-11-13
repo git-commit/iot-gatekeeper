@@ -3,19 +3,20 @@
 import bot as chat_bot
 from intercom import Intercom
 import logging
-from facerecognition import FaceRecognition as face_recognition
+from facerecognition import FaceRecognition
 
 icom = Intercom()
+facerec = FaceRecognition()
 
 def onBellPressed():
     if chat_bot.chat_id is None:
-        logging.warning('Bell is pressed but we have now user in the chat')
+        logging.warning('Bell is pressed but we have no user in the chat')
     if chat_bot.verify_image(chat_bot.updater, icom.takePicture()):
         icom.ringBuzzer()
 
 def onAutoBuzz():
     pic = icom.takePicture()
-    name = face_recognition.verify_face(pic)
+    name = facerec.verify_face(pic)
     if name:
         logging.debug("Auto-buzz: %s is in front of the door. Open..." % name)
         icom.ringBuzzer()
