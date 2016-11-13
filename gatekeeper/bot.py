@@ -27,7 +27,7 @@ chat_id = None
 face_recognition = FaceRecognition()
 speech_recognition = SpeechRecognition()
 
-main_menu = [['Authorize new person'], ['Text to Speech', 'Snap a Photo']]
+main_menu = [['Authorize new person', 'Record'], ['Text to Speech', 'Snap a Photo']]
 main_menu = ReplyKeyboardMarkup(main_menu, one_time_keyboard=False)
 
 door_menu = [['Open the door', 'Hold the door!'], ['Basic responses']]
@@ -107,6 +107,7 @@ def verify_image(updater, image):
     try:
         updater.bot.sendPhoto(chat_id, BytesIO(image))
         updater.bot.sendMessage(chat_id, text, reply_markup=door_menu)
+        sendVoiceToChat2(updater)
     except Exception:
         logging.exception("Can not send the photo of the person in front of the door to the chat.")
     return verified_name is not None
@@ -132,10 +133,26 @@ def sendVoiceToChat(bot, update, file_path):
     bot.sendVoice(chat_id=update.message.chat_id, voice=open(file_path, 'rb'))
     speech_recognition.transformToText("output.wav")
 
+def sendVoiceToChat2(updater):
+    """
+    send voice as new message
+    """
+    file = audio.recordVoice()
+    updater.bot.sendVoice(chat_id=chat_id, voice=open(file, 'rb'))
+
+
 def voiceSenderTester(bot, update):
+    file = speech_recognition.transformToAudio("Say your message")
+    if file:
+        audio.playAudioFile(file)
+    # if file:
+        # update.message.reply_text('', reply_markup=main_menu)
     file = audio.recordVoice()
     sendVoiceToChat(bot, update, file)
 
+    file = speech_recognition.transformToAudio("Stop talking")
+    if file:
+        audio.playAudioFile(file)
 
 def uploadSnap(updater, image):
     try:
@@ -220,11 +237,10 @@ updater.dispatcher.add_handler(CommandHandler('play', playAudio))
 updater.dispatcher.add_handler(talk_handler)
 updater.dispatcher.add_handler(door_opening_handler)
 
-updater.dispatcher.addHandler(RegexHandler('^Snap a Photo', take_a_snap))
+updater.dispatcher.add_handler(RegexHandler('^Snap a Photo', take_a_snap))
+updater.dispatcher.add_handler(RegexHandler('^Record', voiceSenderTester))
 
 updater.dispatcher.addHandler(MessageHandler(Filters.photo, verify))
-
-updater.dispatcher.add_handler(CommandHandler('record', voiceSenderTester))
 
 voice_handler = MessageHandler(Filters.voice, voice)
 
