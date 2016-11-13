@@ -57,11 +57,11 @@ class Intercom(object):
         read = digitalRead(self.bell_button_gpio)
         return read == 1
 
-    def __update_buzzer_state(self):
-        if self.should_ring_the_buzzer and (datetime.now() - self.buzzer_ring_start_time).total_seconds() > Intercom.BUZZER_RING_DURATION:
-            self.should_ring_the_buzzer = False
-            self.buzzer_ring_start_time = None
-            digitalWrite(self.bell_button_gpio, 0)
+    def __update_bell_state(self):
+        bell_is_still_not_pressed = not self.isBellPressed()
+        if self.bell_is_not_pressed and not bell_is_still_not_pressed:
+            self.onBellPressed()
+        self.bell_is_not_pressed = bell_is_still_not_pressed
 
     def update_state(self):
         self.__update_buzzer_state()
