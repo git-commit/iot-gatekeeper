@@ -104,7 +104,7 @@ def verify_image(updater, image):
 
     try:
         updater.bot.sendPhoto(chat_id, BytesIO(image))
-        updater.message.reply_text(text, reply_markup=door_menu)
+        updater.bot.sendMessage(chat_id, text, reply_markup=door_menu)
     except Exception:
         logging.exception("Can not send the photo of the person in front of the door to the chat.")
     return verified_name is not None
