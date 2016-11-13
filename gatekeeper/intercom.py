@@ -18,11 +18,14 @@ class Intercom(object):
         self.display_i2c = "I2C-1"
         self.debug_led = "D7"
         self.onBellPressedCallback = None
+        self.onAutoBuzzCallback = None
         self.gpio_thread = GPIOThread(self)
         self.gpio_thread.start()
         self.bell_is_not_pressed = True
         self.should_ring_the_buzzer = False
         self.buzzer_ring_start_time = None
+        self.has_visitor = False
+
         pinMode(self.bell_button_gpio, "INPUT")
         pinMode(self.buzzer_gpio, "OUTPUT")
 
@@ -41,15 +44,19 @@ class Intercom(object):
         pass
 
     def takePicture(self):
-        image_name = 'temo.jpg'
+        image_name = 'tmp_visitor.jpg'
         os.system('fswebcam -r 320x240 --save %s' % image_name)
         return open(image_name, 'rb').read()
 
     def registerOnBellPressedListener(self, callback):
         self.onBellPressedCallback = callback
 
+    def registerOnAutoBuzzListener(self, callback):
+        self.onAutoBuzzCallback = callback
+
     def onBellPressed(self):
         if self.onBellPressedCallback:
+            self.has_visitor = True
             logging.info("Bell is pressed")
             self.onBellPressedCallback()
 
@@ -65,6 +72,7 @@ class Intercom(object):
 
     def __update_buzzer_state(self):
         if self.should_ring_the_buzzer and (datetime.now() - self.buzzer_ring_start_time).total_seconds() > Intercom.BUZZER_RING_DURATION:
+            self.has_visitor = False
             self.should_ring_the_buzzer = False
             self.buzzer_ring_start_time = None
             digitalWrite(self.bell_button_gpio, 0)
@@ -78,8 +86,13 @@ class GPIOThread(threading.Thread):
     def __init__(self, intercom):
         super(GPIOThread, self).__init__()
         self.intercom = intercom
+        self.auto_buzz_counter = 0
 
     def run(self):
         while True:
             self.intercom.update_state()
+            if self.auto_buzz_counter is 0 and not self.intercom.has_visitor:
+                self.intercom.onAutoBuzzCallback()
+
+            self.auto_buzz_counter = (self.auto_buzz_counter + 1) % 10
             sleep(0.25)
