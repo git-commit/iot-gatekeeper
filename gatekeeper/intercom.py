@@ -75,6 +75,7 @@ class GPIOThread(threading.Thread):
         while True:
             self.intercom.update_state()
             if self.auto_buzz_counter is 0:
-                self.intercom.onAutoBuzzCallback()
+                if self.intercom.onAutoBuzzCallback is not None:
+                    self.intercom.onAutoBuzzCallback()
             self.auto_buzz_counter = (self.auto_buzz_counter + 1) % 10
             sleep(0.25)
