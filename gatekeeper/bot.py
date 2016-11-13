@@ -165,6 +165,7 @@ def open_door(bot, update):
     audio.playAudioFile(audio.BUZZER_AUDIO_FILE)
     update.message.reply_text('Door opened',
                             reply_markup=main_menu)
+    return ConversationHandler.END
 
 def hold_the_door(bot, update):
     file = speech_recognition.transformToAudio("You are not permitted to enter")
@@ -173,6 +174,8 @@ def hold_the_door(bot, update):
 
     update.message.reply_text('Entrance denied',
                             reply_markup=main_menu)
+
+    return ConversationHandler.END
 
 def goto_basic_responses(bot, update):
     update.message.reply_text('Choose one of given responses',
@@ -220,7 +223,8 @@ door_opening_handler = ConversationHandler(
     states = {
         READY: [RegexHandler('^Open the door', open_door),
                 RegexHandler('^Hold the door!', hold_the_door),
-                RegexHandler('^Basic responses', goto_basic_responses)],
+                RegexHandler('^Basic responses', goto_basic_responses),
+                MessageHandler(Filters.text, basic_response)],
         BASIC_RESPONSES: [MessageHandler(Filters.text, basic_response)]
     },
 
