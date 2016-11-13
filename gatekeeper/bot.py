@@ -132,7 +132,7 @@ def playAudio(bot, update):
 
 def sendVoiceToChat(bot, update, file_path):
     bot.sendVoice(chat_id=update.message.chat_id, voice=open(file_path, 'rb'))
-    speech_recognition.transformToText("output.wav")
+    # speech_recognition.transformToText("output.wav")
 
 def sendVoiceToChat2(updater, file_path):
     """

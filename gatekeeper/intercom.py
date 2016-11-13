@@ -62,7 +62,7 @@ class Intercom(object):
         self.bell_is_not_pressed = bell_is_still_not_pressed
 
     def update_state(self):
-        self.__update_buzzer_state()
+        self.__update_bell_state()
 
 class GPIOThread(threading.Thread):
 
