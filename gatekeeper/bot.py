@@ -47,6 +47,7 @@ snapTaker = None
 def start(bot, update):
     global chat_id
     chat_id = update.message.chat.id
+    logging.info("Current chat owner is %s" % update.message.chat.first_name)
     update.message.reply_text(
         'Hi! I am your personal intercom assistant. \n\n'
         'Here is a menu of all the functionality I have.',
@@ -62,7 +63,7 @@ def authorize(bot, update):
 def enter_name(bot, update):
     global name
     name = update.message.text
-    update.message.reply_text('Now upload a photo of %s!' %name)
+    update.message.reply_text('Now upload a photo of %s!' % name)
     return PHOTO
 
 def new_face(bot, update):
@@ -95,11 +96,17 @@ def verify(bot, update):
 
 def verify_image(updater, image):
     verified_name = face_recognition.verify_face(image)
+    logging.info('recognize %s' % verified_name)
     text = '%s is knocking on the door!' % verified_name
     if verified_name is None:
         text = 'Some stranger is knocking on the door. Do you want to let him in?'
-    updater.bot.sendPhoto(chat_id, BytesIO(image))
-    update.message.reply_text(text, reply_markup=door_menu)
+
+    try:
+        updater.bot.sendPhoto(chat_id, BytesIO(image))
+        update.message.reply_text(text, reply_markup=door_menu)
+    except Exception:
+        logging.exception("Can not send the photo of the person in front of the door to the chat.")
+    return verified_name is not None
 
 def enter_talk(bot, update):
     update.message.reply_text('Enter the text you want to say.', reply_markup=talk_menu)

@@ -3,10 +3,13 @@ from facerecognition import *
 from grovepi import *
 from time import sleep
 import logging
+from datetime import datetime, timedelta
 
 class Intercom(object):
 
     """Docstring for Intercom. """
+
+    BUZZER_RING_DURATION = 3
 
     def __init__(self):
         self.bell_button_gpio = 4
@@ -16,14 +19,20 @@ class Intercom(object):
         self.debug_led = "D7"
         self.onBellPressedCallback = None
         self.gpio_thread = GPIOThread(self)
+        self.gpio_thread.start()
+        self.bell_is_not_pressed = True
+        self.should_ring_the_buzzer = False
+        self.buzzer_ring_start_time = None
         pinMode(self.bell_button_gpio, "INPUT")
         pinMode(self.buzzer_gpio, "OUTPUT")
 
     def openDoor(self):
         pass
 
-    def ringBell(self):
-        readDigital(self.buzzer_gpio, 1)
+    def ringBuzzer(self):
+        digitalWrite(self.bell_speaker_gpio, 1)
+        self.should_ring_the_buzzer = True
+        self.buzzer_ring_start_time = datetime.now()
 
     def recordAudio(self, seconds=10):
         pass
@@ -33,7 +42,7 @@ class Intercom(object):
 
     def takePicture(self):
         image_name = 'temo.jpg'
-        os.system('fswebcam -r 320x240 --save %s' % image_name)
+        os.system('fswebcam -r 640x480 --save %s' % image_name)
         return open(image_name, 'rb').read()
 
     def registerOnBellPressedListener(self, callback):
@@ -41,11 +50,28 @@ class Intercom(object):
 
     def onBellPressed(self):
         if self.onBellPressedCallback:
+            logging.info("Bell is pressed")
             self.onBellPressedCallback()
 
     def isBellPressed(self):
-        logging.info("Bell is pressed")
-        return readDigital(self.bell_button_gpio) == 1
+        read = digitalRead(self.bell_button_gpio)
+        return read == 1
+
+    def __update_bell_state(self):
+        bell_is_still_not_pressed = not self.isBellPressed()
+        if self.bell_is_not_pressed and not bell_is_still_not_pressed:
+            self.onBellPressed()
+        self.bell_is_not_pressed = bell_is_still_not_pressed
+
+    def __update_buzzer_state(self):
+        if self.should_ring_the_buzzer and (datetime.now() - self.buzzer_ring_start_time).total_seconds() > Intercom.BUZZER_RING_DURATION:
+            self.should_ring_the_buzzer = False
+            self.buzzer_ring_start_time = None
+            digitalWrite(self.bell_button_gpio, 0)
+
+    def update_state(self):
+        self.__update_bell_state()
+        self.__update_buzzer_state()
 
 class GPIOThread(threading.Thread):
 
@@ -54,10 +80,6 @@ class GPIOThread(threading.Thread):
         self.intercom = intercom
 
     def run(self):
-        bell_is_pressed = False
         while True:
-            bell_is_pressed_new = self.intercom.isBellPressed()
-            if bell_is_pressed and not bell_is_pressed_new:
-                self.intercom.onBellPressed()
-            bell_is_pressed = bell_is_pressed
-            sleep(0.5)
+            self.intercom.update_state()
+            sleep(0.25)
