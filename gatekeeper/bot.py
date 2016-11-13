@@ -13,7 +13,7 @@ from telegram.ext import Updater, CommandHandler, MessageHandler, RegexHandler, 
                         ConversationHandler
 
 
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 NAME, PHOTO = range(2)

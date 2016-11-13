@@ -15,11 +15,12 @@ def onBellPressed():
         icom.ringBuzzer()
 
 def onAutoBuzz():
-    pic = icom.takePicture()
-    name = facerec.verify_face(pic)
-    if name:
-        logging.debug("Auto-buzz: %s is in front of the door. Open..." % name)
-        icom.ringBuzzer()
+    pass
+    # pic = icom.takePicture()
+    # name = facerec.verify_face(pic)
+    # if name:
+    #     logging.debug("Auto-buzz: %s is in front of the door. Open..." % name)
+    #     icom.ringBuzzer()
 
 def onTakeSnap():
     pic = icom.takePicture()
