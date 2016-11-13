@@ -107,6 +107,7 @@ def verify_image(updater, image):
     try:
         updater.bot.sendPhoto(chat_id, BytesIO(image))
         updater.bot.sendMessage(chat_id, text, reply_markup=door_menu)
+        sendVoiceToChat2(updater)
     except Exception:
         logging.exception("Can not send the photo of the person in front of the door to the chat.")
     return verified_name is not None
@@ -131,6 +132,14 @@ def playAudio(bot, update):
 def sendVoiceToChat(bot, update, file_path):
     bot.sendVoice(chat_id=update.message.chat_id, voice=open(file_path, 'rb'))
     speech_recognition.transformToText("output.wav")
+
+def sendVoiceToChat2(updater):
+    """
+    send voice as new message
+    """
+    file = audio.recordVoice()
+    updater.bot.sendVoice(chat_id=chat_id, voice=open(file, 'rb'))
+
 
 def voiceSenderTester(bot, update):
     file = audio.recordVoice()
