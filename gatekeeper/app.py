@@ -23,4 +23,6 @@ def onAutoBuzz():
 
 icom.registerOnBellPressedListener(onBellPressed)
 icom.registerOnAutoBuzzListener(onAutoBuzz)
+chat_bot.registerOnSnapButtonListener(onBellPressed)
+
 chat_bot.run_bot()

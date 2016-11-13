@@ -42,6 +42,8 @@ authorize_menu = ReplyKeyboardMarkup(authorize_menu, one_time_keyboard=False)
 talk_menu = [["Who are you?"], ["What is the meaning of this?"], ["Cancel"]]
 talk_menu = ReplyKeyboardMarkup(talk_menu, one_time_keyboard=True)
 
+snapTaker = None
+
 def start(bot, update):
     global chat_id
     chat_id = update.message.chat.id
@@ -50,6 +52,9 @@ def start(bot, update):
         'Hi! I am your personal intercom assistant. \n\n'
         'Here is a menu of all the functionality I have.',
         reply_markup=main_menu)
+
+def registerOnSnapButtonListener(actor):
+    snapTaker = actor
 
 def authorize(bot, update):
     update.message.reply_text('Enter the person\'s name', reply_markup=authorize_menu)
@@ -159,6 +164,10 @@ def basic_response(bot, update):
                             reply_markup=main_menu)
     return ConversationHandler.END
 
+def take_a_snap(bot, update):
+    if snapTaker:
+        snapTaker()
+
 updater = Updater(privateconfig.telegram_token)
 authorize_handler = ConversationHandler(
     entry_points = [RegexHandler('^Authorize new person', authorize)],
@@ -203,6 +212,8 @@ updater.dispatcher.add_handler(CommandHandler('play', playAudio))
 
 updater.dispatcher.add_handler(talk_handler)
 updater.dispatcher.add_handler(door_opening_handler)
+
+updater.dispatcher.addHandler(RegexHandler('^Snap a Photo', take_a_snap))
 
 updater.dispatcher.add_handler(CommandHandler('record', voiceSenderTester))
 
