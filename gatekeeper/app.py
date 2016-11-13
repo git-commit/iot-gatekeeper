@@ -21,8 +21,12 @@ def onAutoBuzz():
         logging.debug("Auto-buzz: %s is in front of the door. Open..." % name)
         icom.ringBuzzer()
 
+def onTakeSnap():
+    pic = icom.takePicture()
+    chat_bot.uploadSnap(chat_bot.updater, pic)
+
 icom.registerOnBellPressedListener(onBellPressed)
 icom.registerOnAutoBuzzListener(onAutoBuzz)
-chat_bot.registerOnSnapButtonListener(onBellPressed)
+chat_bot.registerOnSnapButtonListener(onTakeSnap)
 
 chat_bot.run_bot()

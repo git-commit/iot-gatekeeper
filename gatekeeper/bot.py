@@ -54,6 +54,7 @@ def start(bot, update):
         reply_markup=main_menu)
 
 def registerOnSnapButtonListener(actor):
+    global snapTaker
     snapTaker = actor
 
 def authorize(bot, update):
@@ -103,7 +104,7 @@ def verify_image(updater, image):
 
     try:
         updater.bot.sendPhoto(chat_id, BytesIO(image))
-        update.message.reply_text(text, reply_markup=door_menu)
+        updater.message.reply_text(text, reply_markup=door_menu)
     except Exception:
         logging.exception("Can not send the photo of the person in front of the door to the chat.")
     return verified_name is not None
@@ -132,6 +133,13 @@ def sendVoiceToChat(bot, update, file_path):
 def voiceSenderTester(bot, update):
     file = audio.recordVoice()
     sendVoiceToChat(bot, update, file)
+
+
+def uploadSnap(updater, image):
+    try:
+        updater.bot.sendPhoto(chat_id, BytesIO(image))
+    except Exception:
+        logging.exception("Can not send the photo of the person in front of the door to the chat.")
 
 
 def open_door(bot, update):
