@@ -10,6 +10,7 @@ from subprocess import call
 temp = tempfile.gettempdir()
 
 CHUNK = 1024
+BUZZER_AUDIO_FILE = 'res/buzz.wav'
 
 def isVoiceMessage(message):
     return message.voice is not None

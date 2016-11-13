@@ -92,6 +92,8 @@ def verify(bot, update):
     text = '%s is knocking on the door!' % verified_name
     if verified_name is None:
         text = 'Some stranger is knocking on the door. Do you want to let him in?'
+    else:
+        audio.playAudioFile(audio.BUZZER_AUDIO_FILE)
     update.message.reply_text(text, reply_markup=door_menu)
     return READY
 
@@ -143,10 +145,7 @@ def uploadSnap(updater, image):
 
 
 def open_door(bot, update):
-    file = speech_recognition.transformToAudio(update.message.text)
-    if file:
-        audio.playAudioFile('temp.wav')
-
+    audio.playAudioFile(audio.BUZZER_AUDIO_FILE)
     update.message.reply_text('Door opened',
                             reply_markup=main_menu)
 
