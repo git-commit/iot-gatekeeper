@@ -223,6 +223,8 @@ updater.dispatcher.add_handler(door_opening_handler)
 
 updater.dispatcher.addHandler(RegexHandler('^Snap a Photo', take_a_snap))
 
+updater.dispatcher.addHandler(MessageHandler(Filters.photo, verify))
+
 updater.dispatcher.add_handler(CommandHandler('record', voiceSenderTester))
 
 voice_handler = MessageHandler(Filters.voice, voice)

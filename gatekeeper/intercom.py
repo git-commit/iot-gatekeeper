@@ -4,17 +4,17 @@ from grovepi import *
 from time import sleep
 import logging
 from datetime import datetime, timedelta
+import audio
 
 class Intercom(object):
 
     """Docstring for Intercom. """
 
-    BUZZER_RING_DURATION = 3
+    BUZZER_AUDIO_FILE = ''
 
     def __init__(self):
         self.bell_button_gpio = 4
         self.bell_speaker_gpio = 2
-        self.buzzer_gpio = 3
         self.display_i2c = "I2C-1"
         self.debug_led = "D7"
         self.onBellPressedCallback = None
@@ -22,19 +22,14 @@ class Intercom(object):
         self.gpio_thread = GPIOThread(self)
         self.gpio_thread.start()
         self.bell_is_not_pressed = True
-        self.should_ring_the_buzzer = False
-        self.buzzer_ring_start_time = None
 
         pinMode(self.bell_button_gpio, "INPUT")
-        pinMode(self.buzzer_gpio, "OUTPUT")
 
     def openDoor(self):
         pass
 
     def ringBuzzer(self):
-        digitalWrite(self.bell_speaker_gpio, 1)
-        self.should_ring_the_buzzer = True
-        self.buzzer_ring_start_time = datetime.now()
+        audio.playAudioFile(Intercom.BUZZER_AUDIO_FILE)
 
     def recordAudio(self, seconds=10):
         pass
@@ -62,12 +57,6 @@ class Intercom(object):
         read = digitalRead(self.bell_button_gpio)
         return read == 1
 
-    def __update_bell_state(self):
-        bell_is_still_not_pressed = not self.isBellPressed()
-        if self.bell_is_not_pressed and not bell_is_still_not_pressed:
-            self.onBellPressed()
-        self.bell_is_not_pressed = bell_is_still_not_pressed
-
     def __update_buzzer_state(self):
         if self.should_ring_the_buzzer and (datetime.now() - self.buzzer_ring_start_time).total_seconds() > Intercom.BUZZER_RING_DURATION:
             self.should_ring_the_buzzer = False
@@ -75,7 +64,6 @@ class Intercom(object):
             digitalWrite(self.bell_button_gpio, 0)
 
     def update_state(self):
-        self.__update_bell_state()
         self.__update_buzzer_state()
 
 class GPIOThread(threading.Thread):
