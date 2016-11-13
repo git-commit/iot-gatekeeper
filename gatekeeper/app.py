@@ -11,8 +11,7 @@ facerec = FaceRecognition()
 def onBellPressed():
     if chat_bot.chat_id is None:
         logging.warning('Bell is pressed but we have no user in the chat')
-    if chat_bot.verify_image(chat_bot.updater, icom.takePicture()):
-        icom.ringBuzzer()
+    chat_bot.verify_image(chat_bot.updater, icom.takePicture())
 
 def onAutoBuzz():
     pass
