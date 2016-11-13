@@ -222,9 +222,9 @@ door_opening_handler = ConversationHandler(
 
     states = {
         READY: [RegexHandler('^Open the door', open_door),
-                RegexHandler('^Hold the door!', hold_the_door),
+                RegexHandler('^Hold the door\!', hold_the_door),
                 RegexHandler('^Basic responses', goto_basic_responses),
-                MessageHandler(Filters.text, basic_response)],
+                RegexHandler('?!(Open the door|Hold the door\!|Basic responses)', basic_response)],
         BASIC_RESPONSES: [MessageHandler(Filters.text, basic_response)]
     },
 
