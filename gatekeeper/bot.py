@@ -72,11 +72,8 @@ def verify(bot, update):
         text = 'Some stranger is knocking on the door. Do you want to let him in?'
     update.message.reply_text(text)
 
-def verify_image(updater, image, name=None):
-    if name:
-        verified_name = name
-    else:
-        verified_name = face_recognition.verify_face(image)
+def verify_image(updater, image):
+    verified_name = face_recognition.verify_face(image)
     text = '%s is knocking on the door!' % verified_name
     if verified_name is None:
         text = 'Some stranger is knocking on the door. Do you want to let him in?'

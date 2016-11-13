@@ -15,8 +15,9 @@ def onBellPressed():
 
 def onAutoBuzz():
     pic = icom.takePicture()
-    if face_recognition.verify_face(pic) and chat_bot.verify_image(chat_bot.updater, pic):
-        logging.debug("Auto-buzz accepted.")
+    name = face_recognition.verify_face(pic)
+    if name:
+        logging.debug("Auto-buzz: %s is in front of the door. Open..." % name)
         icom.ringBuzzer()
 
 icom.registerOnBellPressedListener(onBellPressed)

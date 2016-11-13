@@ -24,7 +24,6 @@ class Intercom(object):
         self.bell_is_not_pressed = True
         self.should_ring_the_buzzer = False
         self.buzzer_ring_start_time = None
-        self.has_visitor = False
 
         pinMode(self.bell_button_gpio, "INPUT")
         pinMode(self.buzzer_gpio, "OUTPUT")
@@ -56,7 +55,6 @@ class Intercom(object):
 
     def onBellPressed(self):
         if self.onBellPressedCallback:
-            self.has_visitor = True
             logging.info("Bell is pressed")
             self.onBellPressedCallback()
 
@@ -72,7 +70,6 @@ class Intercom(object):
 
     def __update_buzzer_state(self):
         if self.should_ring_the_buzzer and (datetime.now() - self.buzzer_ring_start_time).total_seconds() > Intercom.BUZZER_RING_DURATION:
-            self.has_visitor = False
             self.should_ring_the_buzzer = False
             self.buzzer_ring_start_time = None
             digitalWrite(self.bell_button_gpio, 0)
@@ -91,8 +88,7 @@ class GPIOThread(threading.Thread):
     def run(self):
         while True:
             self.intercom.update_state()
-            if self.auto_buzz_counter is 0 and not self.intercom.has_visitor:
+            if self.auto_buzz_counter is 0:
                 self.intercom.onAutoBuzzCallback()
-
             self.auto_buzz_counter = (self.auto_buzz_counter + 1) % 10
             sleep(0.25)
