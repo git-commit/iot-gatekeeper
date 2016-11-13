@@ -1,1 +1,1 @@
-sudo apt-get install fswebcam ffmpeg libopus-dev 
+sudo apt-get install fswebcam ffmpeg libopus-dev sox
