@@ -31,28 +31,7 @@ def saveVoice(bot, message):
     return local_file_path
 
 def playAudioFile(path):
-    f = wave.open(path, 'rb')
-    p = pyaudio.PyAudio()
-
-    stream = p.open(format=p.get_format_from_width(f.getsampwidth()),
-                channels = f.getnchannels(),
-                rate = f.getframerate(),
-                output = True)
-    #read data
-    data = f.readframes(CHUNK)
-
-    #paly stream
-    while data != '':
-        stream.write(data)
-        data = f.readframes(CHUNK)
-
-    #stop stream
-    stream.stop_stream()
-    stream.close()
-
-    #close PyAudio
-    p.terminate()
-
+   call(["play", path])
 
 def recordVoice():
     FORMAT = pyaudio.paInt16
