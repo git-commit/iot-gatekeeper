@@ -138,7 +138,7 @@ def sendVoiceToChat2(updater, file_path):
     """
     send voice as new message
     """
-    updater.bot.sendVoice(chat_id=chat_id, voice=open(file, 'rb'))
+    updater.bot.sendVoice(chat_id=chat_id, voice=open(file_path, 'rb'))
 
 
 def voiceSenderTester(bot, update):
