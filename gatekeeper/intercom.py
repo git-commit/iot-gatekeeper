@@ -10,7 +10,7 @@ class Intercom(object):
 
     """Docstring for Intercom. """
 
-    BUZZER_AUDIO_FILE = ''
+    BUZZER_AUDIO_FILE = 'res/buzz.wav'
 
     def __init__(self):
         self.bell_button_gpio = 4
