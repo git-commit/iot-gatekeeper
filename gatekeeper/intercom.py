@@ -1,4 +1,3 @@
-import threading
 from facerecognition import *
 from time import sleep
 import logging
@@ -17,8 +16,6 @@ class Intercom(object):
         self.debug_led = "D7"
         self.onBellPressedCallback = None
         self.bell_is_not_pressed = True
-        self.gpio_thread = GPIOThread(self)
-        self.gpio_thread.start()
         self.openDoorClient = nodered.NodeRedDoorOpenClient()
 
     def openDoor(self):
