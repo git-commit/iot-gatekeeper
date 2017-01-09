@@ -4,9 +4,11 @@ import bot as chat_bot
 from intercom import Intercom
 import logging
 from facerecognition import FaceRecognition
+import nodered
 
 icom = Intercom()
 facerec = FaceRecognition()
+doorBellServer = nodered.NodeRedDoorbellServerThread()
 
 def onBellPressed():
     if chat_bot.chat_id is None:

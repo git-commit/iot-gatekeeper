@@ -4,6 +4,7 @@ from time import sleep
 import logging
 from datetime import datetime, timedelta
 import audio
+import nodered
 
 class Intercom(object):
 
@@ -18,18 +19,13 @@ class Intercom(object):
         self.bell_is_not_pressed = True
         self.gpio_thread = GPIOThread(self)
         self.gpio_thread.start()
+        self.openDoorClient = nodered.NodeRedDoorOpenClient()
 
     def openDoor(self):
-        pass
+        openDoorClient.sendOpenDoor()
 
     def ringBuzzer(self):
         audio.playAudioFile(audio.BUZZER_AUDIO_FILE)
-
-    def recordAudio(self, seconds=10):
-        pass
-
-    def playAudio(self, filePath):
-        pass
 
     def takePicture(self):
         image_name = 'tmp_visitor.jpg'
@@ -55,13 +51,3 @@ class Intercom(object):
 
     def update_state(self):
         self.__update_bell_state()
-
-class GPIOThread(threading.Thread):
-
-    def __init__(self, intercom):
-        super(GPIOThread, self).__init__()
-        self.intercom = intercom
-
-    def run(self):
-        while True:
-            self.intercom.update_state()
