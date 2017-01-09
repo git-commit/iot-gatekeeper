@@ -1,6 +1,5 @@
 import threading
 from facerecognition import *
-from grovepi import *
 from time import sleep
 import logging
 from datetime import datetime, timedelta
@@ -16,12 +15,10 @@ class Intercom(object):
         self.display_i2c = "I2C-1"
         self.debug_led = "D7"
         self.onBellPressedCallback = None
+        self.bell_is_not_pressed = True
         self.onAutoBuzzCallback = None
         self.gpio_thread = GPIOThread(self)
         self.gpio_thread.start()
-        self.bell_is_not_pressed = True
-
-        pinMode(self.bell_button_gpio, "INPUT")
 
     def openDoor(self):
         pass
@@ -52,9 +49,8 @@ class Intercom(object):
             self.onBellPressedCallback()
 
     def isBellPressed(self):
-        read = digitalRead(self.bell_button_gpio)
-        return read == 1
-
+        return False
+    
     def __update_bell_state(self):
         bell_is_still_not_pressed = not self.isBellPressed()
         if self.bell_is_not_pressed and not bell_is_still_not_pressed:
