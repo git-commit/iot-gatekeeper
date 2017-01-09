@@ -8,7 +8,8 @@ import nodered
 
 icom = Intercom()
 facerec = FaceRecognition()
-doorBellServer = nodered.NodeRedDoorbellServerThread()
+doorBellServer = nodered.NodeRedDoorbellServerThread(icom)
+doorBellServer.start()
 
 def onBellPressed():
     if chat_bot.chat_id is None:
