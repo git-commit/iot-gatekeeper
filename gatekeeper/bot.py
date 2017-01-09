@@ -55,7 +55,7 @@ def start(bot, update):
 
 def registerOnSnapButtonCallback(callback):
     global snapTaker
-    snapTaker = actor
+    snapTaker = callback
 
 def authorize(bot, update):
     update.message.reply_text('Enter the person\'s name', reply_markup=authorize_menu)
