@@ -7,7 +7,7 @@ import audio
 
 class Intercom(object):
 
-    """Docstring for Intercom. """
+    """An intercom for the things."""
 
     def __init__(self):
         self.bell_button_gpio = 4
@@ -16,7 +16,6 @@ class Intercom(object):
         self.debug_led = "D7"
         self.onBellPressedCallback = None
         self.bell_is_not_pressed = True
-        self.onAutoBuzzCallback = None
         self.gpio_thread = GPIOThread(self)
         self.gpio_thread.start()
 
@@ -37,11 +36,8 @@ class Intercom(object):
         os.system('fswebcam -r 640x480 --save %s' % image_name)
         return open(image_name, 'rb').read()
 
-    def registerOnBellPressedListener(self, callback):
+    def registerOnBellPressedCallback(self, callback):
         self.onBellPressedCallback = callback
-
-    def registerOnAutoBuzzListener(self, callback):
-        self.onAutoBuzzCallback = callback
 
     def onBellPressed(self):
         if self.onBellPressedCallback:
@@ -65,13 +61,7 @@ class GPIOThread(threading.Thread):
     def __init__(self, intercom):
         super(GPIOThread, self).__init__()
         self.intercom = intercom
-        self.auto_buzz_counter = 0
 
     def run(self):
         while True:
             self.intercom.update_state()
-            if self.auto_buzz_counter is 0:
-                if self.intercom.onAutoBuzzCallback is not None:
-                    self.intercom.onAutoBuzzCallback()
-            self.auto_buzz_counter = (self.auto_buzz_counter + 1) % 10
-            sleep(0.25)
