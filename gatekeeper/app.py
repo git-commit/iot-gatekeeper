@@ -5,11 +5,14 @@ from intercom import Intercom
 import logging
 from facerecognition import FaceRecognition
 import nodered
+import subprocess 
 
 icom = Intercom()
 facerec = FaceRecognition()
 doorBellServer = nodered.NodeRedDoorbellServerThread(icom)
 doorBellServer.start()
+
+subprocess.call(["pulseaudio", "-D"])
 
 def onBellPressed():
     if chat_bot.chat_id is None:
