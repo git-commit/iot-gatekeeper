@@ -4,9 +4,12 @@ import bot as chat_bot
 from intercom import Intercom
 import logging
 from facerecognition import FaceRecognition
+import subprocess 
 
 icom = Intercom()
 facerec = FaceRecognition()
+
+subprocess.call(["pulseaudio", "-D"])
 
 def onBellPressed():
     if chat_bot.chat_id is None:
