@@ -39,4 +39,4 @@ class NodeRedDoorOpenClient():
         self.client_socket.connect(("127.0.0.1", NODE_RED_CLIENT_PORT))
 
     def sendOpenDoor(self):
-        self.client_socket.send(1)
+        self.client_socket.send(b'open')

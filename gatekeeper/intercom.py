@@ -19,7 +19,7 @@ class Intercom(object):
         self.openDoorClient = nodered.NodeRedDoorOpenClient()
 
     def openDoor(self):
-        openDoorClient.sendOpenDoor()
+        self.openDoorClient.sendOpenDoor()
 
     def ringBuzzer(self):
         audio.playAudioFile(audio.BUZZER_AUDIO_FILE)

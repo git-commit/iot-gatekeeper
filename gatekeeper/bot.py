@@ -43,6 +43,7 @@ talk_menu = [["Who are you?"], ["What is the meaning of this?"], ["Cancel"]]
 talk_menu = ReplyKeyboardMarkup(talk_menu, one_time_keyboard=True)
 
 snapTaker = None
+openDoorCallback = None
 
 def start(bot, update):
     global chat_id
@@ -56,6 +57,10 @@ def start(bot, update):
 def registerOnSnapButtonCallback(callback):
     global snapTaker
     snapTaker = callback
+
+def registerOpenDoorCallback(callback):
+    global openDoorCallback
+    openDoorCallback = callback
 
 def authorize(bot, update):
     update.message.reply_text('Enter the person\'s name', reply_markup=authorize_menu)
@@ -98,17 +103,27 @@ def verify(bot, update):
     return READY
 
 def verify_image(updater, image):
+    bot.sendChatAction(chat_id=chat_id, action=telegram.ChatAction.TYPING)
     file = audio.recordVoice()
     verified_name = face_recognition.verify_face(image)
     logging.info('recognize %s' % verified_name)
     text = '%s is knocking on the door!' % verified_name
-    if verified_name is None:
+    authorized = verified_name is not None
+    if authorized:
+        text = "%s is at the door. I'll let him in for you." % verified_name
+    else:
         text = 'Some stranger is knocking on the door. Do you want to let him in?'
-
+        
     try:
         updater.bot.sendPhoto(chat_id, BytesIO(image))
-        updater.bot.sendMessage(chat_id, text, reply_markup=door_menu)
         sendVoiceToChat2(updater, file)
+
+        if not authorized:
+            updater.bot.sendMessage(chat_id, text, reply_markup=door_menu)
+        else:
+            updater.bot.sendMessage(chat_id, text, reply_markup=main_menu)
+            openDoorCallback()
+
     except Exception:
         logging.exception("Can not send the photo of the person in front of the door to the chat.")
     return verified_name is not None
@@ -162,7 +177,7 @@ def uploadSnap(updater, image):
 
 
 def open_door(bot, update):
-    audio.playAudioFile(audio.BUZZER_AUDIO_FILE)
+    openDoorCallback()
     update.message.reply_text('Door opened',
                             reply_markup=main_menu)
     return ConversationHandler.END
@@ -233,6 +248,8 @@ door_opening_handler = ConversationHandler(
 
 updater.dispatcher.add_handler(authorize_handler)
 updater.dispatcher.add_handler(CommandHandler('start', start))
+updater.dispatcher.add_handler(CommandHandler('open', open_door))
+
 
 updater.dispatcher.add_handler(MessageHandler(Filters.voice, audio.transmitVoice))
 
@@ -243,6 +260,11 @@ updater.dispatcher.add_handler(door_opening_handler)
 
 updater.dispatcher.add_handler(RegexHandler('^Snap a Photo', take_a_snap))
 updater.dispatcher.add_handler(RegexHandler('^Record', voiceSenderTester))
+
+
+updater.dispatcher.add_handler(RegexHandler('^Open the door', open_door))
+updater.dispatcher.add_handler(RegexHandler('^Hold the door\!', hold_the_door))
+
 
 # updater.dispatcher.addHandler(MessageHandler(Filters.photo, verify))
 
