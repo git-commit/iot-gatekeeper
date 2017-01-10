@@ -16,20 +16,11 @@ def onBellPressed():
         logging.warning('Bell is pressed but we have no user in the chat')
     chat_bot.verify_image(chat_bot.updater, icom.takePicture())
 
-def onAutoBuzz():
-    pass
-    # pic = icom.takePicture()
-    # name = facerec.verify_face(pic)
-    # if name:
-    #     logging.debug("Auto-buzz: %s is in front of the door. Open..." % name)
-    #     icom.ringBuzzer()
-
 def onTakeSnap():
     pic = icom.takePicture()
     chat_bot.uploadSnap(chat_bot.updater, pic)
 
-icom.registerOnBellPressedListener(onBellPressed)
-icom.registerOnAutoBuzzListener(onAutoBuzz)
-chat_bot.registerOnSnapButtonListener(onTakeSnap)
+icom.registerOnBellPressedCallback(onBellPressed)
+chat_bot.registerOnSnapButtonCallback(onTakeSnap)
 
 chat_bot.run_bot()

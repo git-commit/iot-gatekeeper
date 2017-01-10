@@ -53,7 +53,7 @@ def start(bot, update):
         'Here is a menu of all the functionality I have.',
         reply_markup=main_menu)
 
-def registerOnSnapButtonListener(actor):
+def registerOnSnapButtonCallback(callback):
     global snapTaker
     snapTaker = actor
 
