@@ -29,5 +29,6 @@ def onTakeSnap():
 
 icom.registerOnBellPressedCallback(onBellPressed)
 chat_bot.registerOnSnapButtonCallback(onTakeSnap)
+chat_bot.registerOpenDoorCallback(icom.openDoor)
 
 chat_bot.run_bot()
