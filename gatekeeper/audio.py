@@ -5,7 +5,7 @@ import wave
 import pyaudio
 import soundfile as sf
 from pysoundcard import Stream
-from subprocess import call
+from subprocess import call, Popen
 
 temp = tempfile.gettempdir()
 
@@ -36,6 +36,9 @@ def saveVoice(bot, message):
 
 def playAudioFile(path):
    call(["play", path])
+
+def playAudioFileAsync(path):
+    return Popen(['play', path])
 
 def recordVoice():
     FORMAT = pyaudio.paInt16

@@ -7,6 +7,7 @@ from facerecognition import FaceRecognition
 import nodered
 import subprocess 
 from sys import platform
+import audio
 
 icom = Intercom()
 facerec = FaceRecognition()
@@ -22,7 +23,9 @@ def onBellPressed():
     if chat_bot.chat_id is None:
         logging.warning('Bell is pressed but we have no user in the chat')
     else:
+        process = audio.playAudioFileAsync(audio.DOORBELL_AUDIO_FILE)
         chat_bot.verify_image(chat_bot.updater, icom.takePicture())
+        process.terminate()
 
 def onTakeSnap():
     pic = icom.takePicture()
