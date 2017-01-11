@@ -11,22 +11,22 @@ class NodeRedDoorbellServerThread(threading.Thread):
     def __init__(self, intercom):
         super(NodeRedDoorbellServerThread, self).__init__()
         self.intercom = intercom
-        self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.running = True
-        
 
     def run(self):
-        self.server_socket.bind(('', NODE_RED_SERVER_PORT))
-        self.server_socket.listen(1)
-        conn, addr = self.server_socket.accept()
-        while self.running:
-            data = conn.recv(1024)
-            if not data:
-                print("no data breaking")
-                break
-            else:
-                self.intercom.onBellPressed()
-        conn.close()
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
+            self.running = True
+            server_socket.bind(('', NODE_RED_SERVER_PORT))
+            server_socket.listen(1)
+            while self.running:
+                conn, addr = server_socket.accept()
+                with conn:
+                    while self.running:
+                        data = conn.recv(1024)
+                        if not data:
+                            print("no data breaking")
+                            break
+                        else:
+                            self.intercom.onBellPressed()
 
 
 class NodeRedDoorOpenClient():
