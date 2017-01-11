@@ -11,7 +11,7 @@ from io import BytesIO
 from telegram import (ReplyKeyboardMarkup)
 from telegram.ext import Updater, CommandHandler, MessageHandler, RegexHandler, Filters,\
                         ConversationHandler
-
+import telegram
 
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -103,7 +103,7 @@ def verify(bot, update):
     return READY
 
 def verify_image(updater, image):
-    bot.sendChatAction(chat_id=chat_id, action=telegram.ChatAction.TYPING)
+    updater.bot.sendChatAction(chat_id=chat_id, action=telegram.ChatAction.TYPING)
     file = audio.recordVoice()
     verified_name = face_recognition.verify_face(image)
     logging.info('recognize %s' % verified_name)
