@@ -181,12 +181,11 @@ def open_door(bot, update):
     openDoorCallback()
     update.message.reply_text('Door opened',
                             reply_markup=main_menu)
+    
     return ConversationHandler.END
 
 def hold_the_door(bot, update):
-    file = speech_recognition.transformToAudio("You are not permitted to enter")
-    if file:
-        audio.playAudioFile('temp.wav')
+    audio.playAudioFile(audio.NOT_PERMITTED_AUDIO_FILE)
 
     update.message.reply_text('Entrance denied',
                             reply_markup=main_menu)
