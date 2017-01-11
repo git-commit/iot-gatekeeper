@@ -15,6 +15,7 @@ doorBellServer.start()
 
 if platform == "linux" or platform == "linux2":
     # linux
+    print("Starting PulseAudio")
     subprocess.call(["pulseaudio", "-D"])
 
 def onBellPressed():
