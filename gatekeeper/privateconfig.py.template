@@ -1,2 +1,3 @@
 telegram_token = "YOUR_API_KEY"
 bing_speech_token = "YOUR_API_KEY" 
+azure_subs_id = "YOUR_API_KEY"

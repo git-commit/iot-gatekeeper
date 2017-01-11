@@ -1,7 +1,7 @@
 import logging
 import requests
 import os
-import config
+import privateconfig
 from datetime import datetime, timedelta
 
 # After decoding authenticated face we store it to this dictionary for 24 hours, to reduce the number of decoding requests
@@ -29,7 +29,7 @@ class FaceRecognition:
     def decode_page_from_image(self, image):
         headers = {
             'Content-Type': 'application/octet-stream',
-            'Ocp-Apim-Subscription-Key': '%s' % config.azure_subs_id,
+            'Ocp-Apim-Subscription-Key': '%s' % privateconfig.azure_subs_id,
         }
         params = {
             # Request parameters
@@ -47,7 +47,7 @@ class FaceRecognition:
     def are_same(self, face_id1, face_id2):
         headers = {
             'Content-Type': 'application/json',
-            'Ocp-Apim-Subscription-Key': '%s' % config.azure_subs_id,
+            'Ocp-Apim-Subscription-Key': '%s' % privateconfig.azure_subs_id,
         }
         body = {
             "faceId1": face_id1,
