@@ -2,3 +2,4 @@ start - starts interaction with the bot
 play - replays the latest message
 record - records 5 seconds of audio at your door
 cancel - cancel the current interaction
+open - open the door
