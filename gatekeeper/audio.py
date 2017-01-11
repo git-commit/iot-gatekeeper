@@ -13,6 +13,7 @@ CHUNK = 1024
 BUZZER_AUDIO_FILE = 'res/buzz.wav'
 AUTHORIZED_AUDIO_FILE = 'res/authorized.wav'
 NOT_PERMITTED_AUDIO_FILE = 'res/no-permit.wav'
+DOORBELL_AUDIO_FILE = 'res/doorbell.mp3'
 
 def isVoiceMessage(message):
     return message.voice is not None
