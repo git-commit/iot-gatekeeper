@@ -122,6 +122,7 @@ def verify_image(updater, image):
             updater.bot.sendMessage(chat_id, text, reply_markup=door_menu)
         else:
             updater.bot.sendMessage(chat_id, text, reply_markup=main_menu)
+            audio.playAudioFile(audio.AUTHORIZED_AUDIO_FILE)
             openDoorCallback()
 
     except Exception:
