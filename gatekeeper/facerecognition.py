@@ -39,11 +39,14 @@ class FaceRecognition:
         }
         response = requests.post("%s/face/v1.0/detect" % config.azure_api_url, params=params, headers=headers, data=image)
         logging.debug(response.text)
-        response.raise_for_status()
-        if len(response.json()) > 0:
-            return response.json()[0]['faceId']
-        else:
-            return None
+        try:
+            response.raise_for_status()
+            if len(response.json()) > 0:
+                return response.json()[0]['faceId']
+        except requests.exceptions.HTTPError:
+            logging.warning("HTTP Error when verifying faces")
+        
+        return None
 
     def are_same(self, face_id1, face_id2):
         headers = {
