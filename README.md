@@ -1,4 +1,4 @@
-# iot-gatekeeper
+# iot-gatekeeper [![Build Status](https://travis-ci.org/git-commit/iot-gatekeeper.svg?branch=master)](https://travis-ci.org/git-commit/iot-gatekeeper)
 A connected intercom device for the Internet of Things
 
 ## Deployment
