@@ -3,7 +3,7 @@ python:
   - "3.6"
 
 # command to install dependencies
-install: "pip install -r requirements.txt"
+install: "pip install -r gatekeeper/requirements.txt"
 
 # command to run tests
 script: python -m compileall gatekeeper/
