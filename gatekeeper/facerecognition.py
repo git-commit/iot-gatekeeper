@@ -43,8 +43,8 @@ class FaceRecognition:
             response.raise_for_status()
             if len(response.json()) > 0:
                 return response.json()[0]['faceId']
-        except requests.exceptions.HTTPError:
-            logging.warning("HTTP Error when verifying faces")
+        except requests.exceptions.HTTPError as e:
+            logging.warning("HTTP Error when verifying faces: " + str(e))
         
         return None
 
