@@ -75,7 +75,12 @@ class FaceRecognition:
         path = os.path.join(self.image_folder, "%s.jpg" % name)
         image.download(path)
 
+    def has_authorized_faces(self):
+        return not os.listdir(self.image_folder) == []
+
     def verify_face(self, image):
+        if not self.has_authorized_faces(): return None
+
         face_id = self.decode_page_from_image(image)
         if face_id:
             return self.verify_face_id(face_id)
