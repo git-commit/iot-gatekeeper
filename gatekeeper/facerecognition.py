@@ -62,11 +62,35 @@ class FaceRecognition:
         response.raise_for_status()
         return response.json()['isIdentical']
 
+    def azure_face_find_similar(self, face_id, face_ids):
+        """
+        Return the most similar face_id of face_ids or None 
+        """
+        headers = {
+            'Content-Type': 'application/json',
+            'Ocp-Apim-Subscription-Key': '%s' % privateconfig.azure_subs_id,
+        }
+        body = {
+            "faceId": face_id,
+            "faceIds": face_ids
+        }
+
+        response = requests.post("%s/face/v1.0/findsimilars" % config.azure_api_url, headers=headers, json=body)
+        logging.debug(response.text)
+        response.raise_for_status()
+        return response.json()[0]["faceId"] if len(response.json()) > 0 else None
+
     def verify_face_id(self, face_id):
+        f_ids = []
+        fid_dict = {}
         for image_name in os.listdir(self.image_folder):
-            if self.are_same(face_id, self.get_face_id(image_name)):
-                return image_name.split('.')[0].capitalize()
-        return None
+            fid = self.get_face_id(image_name)
+            fid_dict[fid] = image_name 
+            f_ids.append(fid)
+
+        matched_fid = self.azure_face_find_similar(face_id, f_ids)
+
+        return fid_dict[matched_fid].split('.')[0].capitalize() if matched_fid else None
 
     def is_valid(self, last_decode):
         return datetime.now() - timedelta(days=1) < last_decode
@@ -79,10 +103,9 @@ class FaceRecognition:
         return not os.listdir(self.image_folder) == []
 
     def verify_face(self, image):
-        if not self.has_authorized_faces(): return None
-
-        face_id = self.decode_page_from_image(image)
-        if face_id:
-            return self.verify_face_id(face_id)
-        else:
-            return None
+        if self.has_authorized_faces():
+            face_id = self.decode_page_from_image(image)
+            if face_id:
+                return self.verify_face_id(face_id)
+        
+        return None
