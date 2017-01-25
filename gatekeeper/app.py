@@ -25,7 +25,6 @@ def onBellPressed():
     else:
         process = audio.playAudioFileAsync(audio.DOORBELL_AUDIO_FILE)
         chat_bot.verify_image(chat_bot.updater, icom.takePicture())
-        process.terminate()
 
 def onTakeSnap():
     pic = icom.takePicture()
