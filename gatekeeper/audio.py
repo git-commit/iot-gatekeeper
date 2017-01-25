@@ -38,7 +38,7 @@ def playAudioFile(path):
    call(["play", path])
 
 def playAudioFileAsync(path):
-    return Popen(['play', path])
+   call(["play", path, "&"])
 
 def recordVoice():
     FORMAT = pyaudio.paInt16
