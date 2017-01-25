@@ -96,7 +96,7 @@ def verify(bot, update):
     verified_name = face_recognition.verify_face(file_stream)
     text = '%s is knocking on the door!' % verified_name
     if verified_name is None:
-        text = 'Some stranger is knocking on the door. Do you want to let him in?'
+        text = 'Some stranger is knocking on the door. Do you want to let them in?'
     else:
         audio.playAudioFile(audio.BUZZER_AUDIO_FILE)
     update.message.reply_text(text, reply_markup=door_menu)
