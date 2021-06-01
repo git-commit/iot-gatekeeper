@@ -2,7 +2,7 @@ certifi==2016.9.26
 future==0.16.0
 python-telegram-bot==5.2.0
 requests==2.11.1
-urllib3==1.19
+urllib3==1.26.5
 pyaudio==0.2.9
 pysoundfile==0.8.1
 pysoundcard==0.5.2
